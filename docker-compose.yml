@@ -44,3 +44,14 @@ services:
       - ./schemas:/docker-entrypoint-initdb.d:ro
     ports:
       - 5432:5432
+  node-red:
+    container_name: node-red
+    image: nodered/node-red:latest
+    networks:
+      - mynetwork
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - 1880:1880
+    volumes:
+      - ./node-red-data:/data
