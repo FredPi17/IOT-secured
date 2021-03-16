@@ -45,6 +45,7 @@ services:
     ports:
       - 5432:5432
   node-red:
+    container_name: node-red
     image: nodered/node-red:latest
     networks:
       - mynetwork
