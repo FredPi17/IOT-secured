@@ -52,6 +52,6 @@ services:
     environment:
       - TZ=Europe/Paris
     ports:
-      - 1880:1888
+      - 1880:1880
     volumes:
       - ./node-red-data:/data
