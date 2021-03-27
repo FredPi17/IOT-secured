@@ -1,6 +1,10 @@
 version: '3.2'
 networks:
     mynetwork:
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.26.0.0/16
 
 services:
   broker-secure:
@@ -9,11 +13,12 @@ services:
     depends_on: 
       - db
     networks:
-      - mynetwork
+      mynetwork:
+        ipv4_address: 172.26.0.2
     volumes:
       - ./certs-v4/:/etc/ssl/
     ports:
-        - 8888:8888
+        - 8888
         - 8883:8883
     environment: 
       - DOCKER_VERNEMQ_ACCEPT_EULA=yes
@@ -35,7 +40,8 @@ services:
     container_name: postgres
     image: postgres:latest
     networks:
-      - mynetwork
+      mynetwork:
+        ipv4_address: 172.26.0.3
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -43,13 +49,54 @@ services:
     volumes:
       - ./schemas:/docker-entrypoint-initdb.d:ro
     ports:
-      - 5432:5432
+      - 5432
+  mariadb:
+    container_name: mariadb
+    image: mariadb:latest
+    restart: always
+    networks:
+      mynetwork:
+        ipv4_address: 172.26.0.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb/schemas:/docker-entrypoint-initdb.d
+    ports:
+      - 3306
+  adminer:
+    container_name: adminer
+    image: adminer
+    networks:
+      mynetwork:
+        ipv4_address: 172.26.0.10
+    restart: always
+    ports:
+      - 8080:8080
   node-red:
     container_name: node-red
     image: nodered/node-red:latest
+    restart: always
     networks:
-      - mynetwork
+      mynetwork:
+        ipv4_address: 172.26.0.5
     environment:
       - TZ=Europe/Paris
+    volumes: 
+      - ./node-red:/data
+      - ./certs-v4/:/etc/ssl/
     ports:
       - 1880:1880
+    environment: 
+      - NODE_RED_CREDENTIAL_SECRET=${NODE_RED_CREDENTIALS}
+      - NODE_RED_GUILHEM_PASSWORD=${NODE_RED_GUILHEM_PASSWORD}
+      - NODE_RED_FRED_PASSWORD=${NODE_RED_FRED_PASSWORD}
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    networks:
+      mynetwork:
+        ipv4_address: 172.26.0.6
+    restart: always
+    user: "472"
+    ports:
+      - 3000:3000
