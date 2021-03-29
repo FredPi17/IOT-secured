@@ -97,6 +97,10 @@ services:
       mynetwork:
         ipv4_address: 172.26.0.6
     restart: always
+    volumes:
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/log:/var/log/grafana
     user: "472"
     ports:
       - 3000:3000
