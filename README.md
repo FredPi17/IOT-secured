@@ -2,6 +2,10 @@
 
 IoT secured stack
 
+Global schema of infrastructure 
+
+![Global infra](IOT-secured.png)
+
 ## SECURITY
 
 ### MQTT BROKER 
