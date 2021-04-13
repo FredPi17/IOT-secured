@@ -18,7 +18,7 @@ services:
     volumes:
       - ./certs-v4/:/etc/ssl/
     ports:
-        - 8888
+        - 8888:8888
         - 8883:8883
     environment: 
       - DOCKER_VERNEMQ_ACCEPT_EULA=yes
@@ -63,15 +63,6 @@ services:
       - ./mariadb/schemas:/docker-entrypoint-initdb.d
     ports:
       - 3306
-  adminer:
-    container_name: adminer
-    image: adminer
-    networks:
-      mynetwork:
-        ipv4_address: 172.26.0.10
-    restart: always
-    ports:
-      - 8080:8080
   node-red:
     container_name: node-red
     image: nodered/node-red:latest
@@ -97,10 +88,6 @@ services:
       mynetwork:
         ipv4_address: 172.26.0.6
     restart: always
-    volumes:
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/log:/var/log/grafana
     user: "472"
     ports:
       - 3000:3000
